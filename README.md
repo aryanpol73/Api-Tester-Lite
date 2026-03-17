@@ -216,6 +216,4 @@ Backend can be deployed on:
 
 ---
 
-## License
 
-MIT License
