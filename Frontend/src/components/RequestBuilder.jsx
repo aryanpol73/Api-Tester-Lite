@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import { useHistoryStore } from "../store/historyStore"
+import { useCollectionStore } from "../store/collectionStore"
 
 export default function RequestBuilder({ setResponse }) {
 
@@ -9,12 +10,59 @@ export default function RequestBuilder({ setResponse }) {
   const [body, setBody] = useState("")
 
   const addHistory = useHistoryStore((state) => state.addHistory)
+  const addCollection = useCollectionStore((state) => state.addCollection)
+
+  // sidebar run request
+  useEffect(() => {
+    const handler = async (e) => {
+      const item = e.detail || {}
+
+      const newUrl = item.url || ""
+      const newMethod = item.method || "GET"
+      const newBody = item.body || null
+
+      setUrl(newUrl)
+      setMethod(newMethod)
+      setBody(newBody ? JSON.stringify(newBody, null, 2) : "")
+
+      try {
+        const start = Date.now()
+
+        const res = await axios.post("http://localhost:5000/api/request", {
+          url: newUrl,
+          method: newMethod,
+          headers: {},
+          body: newBody
+        })
+
+        const end = Date.now()
+
+        setResponse({
+          data: res.data?.data,
+          status: res.data?.status,
+          time: end - start
+        })
+
+      } catch (error) {
+        setResponse({
+          error: error.response?.data || error.message
+        })
+      }
+    }
+
+    window.addEventListener("loadRequest", handler)
+    return () => window.removeEventListener("loadRequest", handler)
+  }, [])
 
   const sendRequest = async () => {
 
+    if (!url.trim()) {
+      alert("Please enter a valid URL")
+      return
+    }
+
     let parsedBody = null
 
-    // Validate JSON body
     try {
       parsedBody = body ? JSON.parse(body) : null
     } catch {
@@ -23,10 +71,8 @@ export default function RequestBuilder({ setResponse }) {
     }
 
     try {
-
       const start = Date.now()
 
-      // Send request through backend proxy
       const res = await axios.post("http://localhost:5000/api/request", {
         url,
         method,
@@ -36,28 +82,65 @@ export default function RequestBuilder({ setResponse }) {
 
       const end = Date.now()
 
-      // Display response
       setResponse({
-        data: res.data.data,
-        status: res.data.status,
+        data: res.data?.data,
+        status: res.data?.status,
         time: end - start
       })
 
-      // Save to history
+      // Save history
       addHistory({
         method,
         url,
+        body: parsedBody,
+        status: res.data?.status || 200,
         time: new Date().toLocaleTimeString()
       })
 
     } catch (error) {
 
       setResponse({
-        error: error.message
+        error: error.response?.data || error.message
       })
 
+      addHistory({
+        method,
+        url,
+        body: parsedBody,
+        status: "ERROR",
+        time: new Date().toLocaleTimeString()
+      })
+    }
+  }
+
+  // save to collection
+  const saveToCollections = () => {
+
+    if (!url.trim()) {
+      alert("Enter URL before saving")
+      return
     }
 
+    let parsedBody = null
+
+    try {
+      parsedBody = body ? JSON.parse(body) : null
+    } catch {
+      alert("Invalid JSON body")
+      return
+    }
+
+    const name = prompt("Enter collection name:")
+    if (!name || !name.trim()) return
+
+    addCollection({
+      name: name.trim(),
+      method,
+      url,
+      body: parsedBody
+    })
+
+    alert("Saved to collections")
   }
 
   return (
@@ -68,12 +151,12 @@ export default function RequestBuilder({ setResponse }) {
         <select
           value={method}
           onChange={(e) => setMethod(e.target.value)}
-          className="bg-slate-800 p-2 rounded text-white outline-none"
+          className="bg-slate-800 p-2 rounded text-white"
         >
-          <option value="GET">GET</option>
-          <option value="POST">POST</option>
-          <option value="PUT">PUT</option>
-          <option value="DELETE">DELETE</option>
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>DELETE</option>
         </select>
 
         <input
@@ -81,19 +164,25 @@ export default function RequestBuilder({ setResponse }) {
           placeholder="Enter API URL..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="flex-1 p-2 rounded bg-slate-800 text-white placeholder-gray-400 outline-none"
+          className="flex-1 p-2 rounded bg-slate-800 text-white"
         />
 
         <button
           onClick={sendRequest}
-          className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500"
+          className="bg-blue-600 px-4 py-2 rounded text-white"
         >
           Send
         </button>
 
+        <button
+          onClick={saveToCollections}
+          className="bg-emerald-600 px-4 py-2 rounded text-white"
+        >
+          Save
+        </button>
+
       </div>
 
-      {/* Body editor */}
       {(method === "POST" || method === "PUT") && (
         <textarea
           placeholder="Enter JSON body..."
