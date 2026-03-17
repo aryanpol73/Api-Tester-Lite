@@ -9,62 +9,76 @@ The project is built with **React + Vite (Frontend)** and **Node.js + Express (B
 
 ## Features
 
-* Send HTTP requests (GET, POST, PUT, DELETE)
-* Custom request headers and body
-* JSON response viewer
-* Request history tracking
-* Collections to organize saved requests
-* Environment variable support
-* Lightweight and fast interface
-* Progressive Web App (PWA) support
+- ⚡ Send HTTP requests (GET, POST, PUT, DELETE)
+- 🌍 Environment variables support (`{{baseUrl}}`)
+- 🧾 JSON request body handling
+- 📂 Collections to save APIs
+- 🕘 Request history tracking
+- 📊 Response viewer with status & response time
+- 📱 Installable as a Progressive Web App (PWA)
+- 🚀 Fast and lightweight interface
 
 ---
 
 ## Tech Stack
 
-Frontend
+### Frontend
+- React (Vite)
+- JavaScript
+- Tailwind CSS
+- Zustand (state management)
+- Axios
+- vite-plugin-pwa
 
-* React
-* Vite
-* JavaScript
-* CSS
+### Backend
+- Node.js
+- Express
+- Axios
 
-Backend
+## 🌐 Live Demo
 
-* Node.js
-* Express
-* Axios
-
-Deployment
-
-* Vercel (Frontend)
-* Render / Railway / Serverless (Backend)
+- 🔗 Frontend: https://api-tester-lite.vercel.app  
+- 🔗 Backend: https://api-tester-lite.onrender.com  
 
 ---
 
 ## Project Structure
 
 ```
-api-tester-lite
+API-Tester-Lite/
 │
-├── Backend
+├── Backend/
 │   ├── server.js
 │   ├── package.json
+│   └── node_modules
 │
-├── Frontend
-│   ├── src
-│   │   ├── components
-│   │   │   ├── RequestBuilder.jsx
-│   │   │   └── ResponseViewer.jsx
-│   │   ├── store
-│   │   │   └── historyStore.js
-│   │   ├── App.jsx
-│   │   └── main.jsx
+├── Frontend/
+│   ├── public/
+│   │   ├── apitester-icon-192.png
+│   │   ├── apitester-icon-512.png
 │   │
-│   ├── public
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── RequestBuilder.jsx
+│   │   │   ├── ResponseViewer.jsx
+│   │   │   └── Sidebar.jsx
+│   │   │
+│   │   ├── store/
+│   │   │   ├── collectionStore.js
+│   │   │   ├── environmentStore.js
+│   │   │   └── historyStore.js
+│   │   │
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   │
 │   ├── index.html
 │   ├── vite.config.js
-│   └── package.json
+│   ├── package.json
+│   └── node_modules
+│
+├── .gitignore
+├── README.md
 ```
 
 ---
@@ -74,18 +88,13 @@ api-tester-lite
 Clone the repository
 
 ```
-git clone https://github.com/yourusername/api-tester-lite.git
-```
-
-Navigate into the project
-
-```
-cd api-tester-lite
+git clone https://github.com/aryanpol73/Api-Tester-Lite.git
+cd Api-Tester-Lite
 ```
 
 ---
 
-### Install Backend
+### Backend Setup
 
 ```
 cd Backend
@@ -128,40 +137,52 @@ https://api-tester-lite.vercel.app
 ### POST Request Example 
 <img width="1907" height="982" alt="Api-Tester-Lite-image2" src="https://github.com/user-attachments/assets/2349fdb4-16e4-4dad-bde4-d9089a45a1da" />
 
-## ⚡ Features
-- Send API requests (GET, POST, PUT, DELETE)
-- Request history
-- Collections (save APIs)
-- Environment variables
-- Response viewer with status & time
-
-## 🧠 Tech Stack
-- React + Vite
-- Node.js + Express
-- Zustand (state management)
 
 ## 💡 Why I built this
-To understand API workflows, state management, and full-stack communication.
+To deeply understand:
+-API workflows
+-Frontend ↔ Backend communication
+-State management (Zustand)
+-Deployment (Vercel + Render)
+-Progressive Web Apps (PWA)
 
 ## Example API Test
 
 Example request
-
+You can test the tool using a public API like JSONPlaceholder.
+### 🔹 GET Request
 ```
-GET https://jsonplaceholder.typicode.com/posts/1
+GET https://jsonplaceholder.typicode.com/posts
 ```
-
-Response
-
+### 🔹 POST Request
 ```
+POST https://jsonplaceholder.typicode.com/posts
+
+
+**Body**
+```json
 {
-  "userId": 1,
-  "id": 1,
-  "title": "...",
-  "body": "..."
+  "title": "test",
+  "body": "hello world",
+  "userId": 1
 }
 ```
+### Environmental Variables
+```
+Add a variable:
+baseUrl = https://jsonplaceholder.typicode.com
 
+Then use:
+{{baseUrl}}/posts
+
+Response:
+{
+  "title": "test",
+  "body": "hello world",
+  "userId": 1,
+  "id": 101
+}
+```
 ---
 
 ## Deployment
