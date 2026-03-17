@@ -117,6 +117,32 @@ http://localhost:5173
 
 ---
 
+## 🚀 Live Demo
+https://api-tester-lite.vercel.app
+
+## 📸 Screenshots
+
+### Main API Testing
+<img width="1871" height="1081" alt="Api-Tester-Lite-image1" src="https://github.com/user-attachments/assets/4ed34c90-ab75-4fab-abc0-f6774d706c5f" />
+
+### POST Request Example 
+<img width="1907" height="982" alt="Api-Tester-Lite-image2" src="https://github.com/user-attachments/assets/2349fdb4-16e4-4dad-bde4-d9089a45a1da" />
+
+## ⚡ Features
+- Send API requests (GET, POST, PUT, DELETE)
+- Request history
+- Collections (save APIs)
+- Environment variables
+- Response viewer with status & time
+
+## 🧠 Tech Stack
+- React + Vite
+- Node.js + Express
+- Zustand (state management)
+
+## 💡 Why I built this
+To understand API workflows, state management, and full-stack communication.
+
 ## Example API Test
 
 Example request
