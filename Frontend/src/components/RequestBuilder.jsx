@@ -14,7 +14,7 @@ export default function RequestBuilder({ setResponse }) {
   const addCollection = useCollectionStore((state) => state.addCollection)
   const variables = useEnvironmentStore((state) => state.variables)
 
-  // ✅ Replace environment variables
+  //environment variables
   const replaceEnv = (inputUrl) => {
     let finalUrl = inputUrl
 
@@ -25,7 +25,7 @@ export default function RequestBuilder({ setResponse }) {
     return finalUrl
   }
 
-  // ✅ Sidebar click → run request
+  //Sidebar 
   useEffect(() => {
     const handler = async (e) => {
       const item = e.detail || {}
@@ -42,7 +42,7 @@ export default function RequestBuilder({ setResponse }) {
         const start = Date.now()
 
         const res = await axios.post("http://localhost:5000/api/request", {
-          url: replaceEnv(newUrl), // ✅ FIXED
+          url: replaceEnv(newUrl), 
           method: newMethod,
           headers: {},
           body: newBody
@@ -67,7 +67,7 @@ export default function RequestBuilder({ setResponse }) {
     return () => window.removeEventListener("loadRequest", handler)
   }, [variables])
 
-  // ✅ Send request
+  //Send request
   const sendRequest = async () => {
 
     if (!url.trim()) {
@@ -104,7 +104,7 @@ export default function RequestBuilder({ setResponse }) {
         time: end - start
       })
 
-      // ✅ Save history (store final URL)
+      // Save history 
       addHistory({
         method,
         url: finalUrl,
@@ -129,7 +129,7 @@ export default function RequestBuilder({ setResponse }) {
     }
   }
 
-  // ✅ Save to collections
+  // Save to collections
   const saveToCollections = () => {
 
     if (!url.trim()) {
@@ -160,54 +160,56 @@ export default function RequestBuilder({ setResponse }) {
   }
 
   return (
-    <div className="p-4 border-b border-slate-700">
+  <div className="p-3 border-b border-slate-700">
 
-      <div className="flex gap-2 mb-3">
+    {/*Top Row */}
+    <div className="flex flex-col md:flex-row gap-2 mb-3">
 
-        <select
-          value={method}
-          onChange={(e) => setMethod(e.target.value)}
-          className="bg-slate-800 p-2 rounded text-white"
-        >
-          <option>GET</option>
-          <option>POST</option>
-          <option>PUT</option>
-          <option>DELETE</option>
-        </select>
+      <select
+        value={method}
+        onChange={(e) => setMethod(e.target.value)}
+        className="bg-slate-800 p-2 rounded text-white w-full md:w-auto"
+      >
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+      </select>
 
-        <input
-          type="text"
-          placeholder="Enter API URL..."
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="flex-1 p-2 rounded bg-slate-800 text-white"
-        />
+      <input
+        type="text"
+        placeholder="Enter API URL..."
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        className="flex-1 w-full p-2 rounded bg-slate-800 text-white"
+      />
 
-        <button
-          onClick={sendRequest}
-          className="bg-blue-600 px-4 py-2 rounded text-white"
-        >
-          Send
-        </button>
+      <button
+        onClick={sendRequest}
+        className="bg-blue-600 px-4 py-2 rounded text-white w-full md:w-auto"
+      >
+        Send
+      </button>
 
-        <button
-          onClick={saveToCollections}
-          className="bg-emerald-600 px-4 py-2 rounded text-white"
-        >
-          Save
-        </button>
-
-      </div>
-
-      {(method === "POST" || method === "PUT") && (
-        <textarea
-          placeholder="Enter JSON body..."
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          className="w-full h-32 bg-slate-800 text-white p-3 rounded"
-        />
-      )}
+      <button
+        onClick={saveToCollections}
+        className="bg-emerald-600 px-4 py-2 rounded text-white w-full md:w-auto"
+      >
+        Save
+      </button>
 
     </div>
-  )
+
+    {/*Body Input */}
+    {(method === "POST" || method === "PUT") && (
+      <textarea
+        placeholder="Enter JSON body..."
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+        className="w-full h-32 bg-slate-800 text-white p-3 rounded resize-none"
+      />
+    )}
+
+  </div>
+)
 }
