@@ -1,13 +1,7 @@
 import { create } from "zustand"
 
 export const useEnvironmentStore = create((set) => ({
-  variables: (() => {
-    try {
-      return JSON.parse(localStorage.getItem("api-env") || "{}")
-    } catch {
-      return {}
-    }
-  })(),
+  variables: JSON.parse(localStorage.getItem("api-env") || "{}"),
 
   addVariable: (key, value) =>
     set((state) => {

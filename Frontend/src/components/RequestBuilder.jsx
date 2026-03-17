@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { useHistoryStore } from "../store/historyStore"
 import { useCollectionStore } from "../store/collectionStore"
+import { useEnvironmentStore } from "../store/environmentStore"
 
 export default function RequestBuilder({ setResponse }) {
 
@@ -11,8 +12,20 @@ export default function RequestBuilder({ setResponse }) {
 
   const addHistory = useHistoryStore((state) => state.addHistory)
   const addCollection = useCollectionStore((state) => state.addCollection)
+  const variables = useEnvironmentStore((state) => state.variables)
 
-  // sidebar run request
+  // ✅ Replace environment variables
+  const replaceEnv = (inputUrl) => {
+    let finalUrl = inputUrl
+
+    Object.keys(variables).forEach((key) => {
+      finalUrl = finalUrl.replaceAll(`{{${key}}}`, variables[key])
+    })
+
+    return finalUrl
+  }
+
+  // ✅ Sidebar click → run request
   useEffect(() => {
     const handler = async (e) => {
       const item = e.detail || {}
@@ -29,7 +42,7 @@ export default function RequestBuilder({ setResponse }) {
         const start = Date.now()
 
         const res = await axios.post("http://localhost:5000/api/request", {
-          url: newUrl,
+          url: replaceEnv(newUrl), // ✅ FIXED
           method: newMethod,
           headers: {},
           body: newBody
@@ -52,8 +65,9 @@ export default function RequestBuilder({ setResponse }) {
 
     window.addEventListener("loadRequest", handler)
     return () => window.removeEventListener("loadRequest", handler)
-  }, [])
+  }, [variables])
 
+  // ✅ Send request
   const sendRequest = async () => {
 
     if (!url.trim()) {
@@ -73,8 +87,10 @@ export default function RequestBuilder({ setResponse }) {
     try {
       const start = Date.now()
 
-      const res = await axios.post("http://localhost:5000/api/request", {
-        url,
+      const finalUrl = replaceEnv(url) // ✅ FIXED
+
+      const res = await axios.post("https://api-tester-lite.onrender.com/api/request", {
+        url: finalUrl,
         method,
         headers: {},
         body: parsedBody
@@ -88,10 +104,10 @@ export default function RequestBuilder({ setResponse }) {
         time: end - start
       })
 
-      // Save history
+      // ✅ Save history (store final URL)
       addHistory({
         method,
-        url,
+        url: finalUrl,
         body: parsedBody,
         status: res.data?.status || 200,
         time: new Date().toLocaleTimeString()
@@ -105,7 +121,7 @@ export default function RequestBuilder({ setResponse }) {
 
       addHistory({
         method,
-        url,
+        url: replaceEnv(url),
         body: parsedBody,
         status: "ERROR",
         time: new Date().toLocaleTimeString()
@@ -113,7 +129,7 @@ export default function RequestBuilder({ setResponse }) {
     }
   }
 
-  // save to collection
+  // ✅ Save to collections
   const saveToCollections = () => {
 
     if (!url.trim()) {
