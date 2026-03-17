@@ -10,12 +10,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
 
-      devOptions: {
-        enabled: true
-      },
+     
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
 
       manifest: {
-        id: '/',
         name: 'API Tester Lite',
         short_name: 'API Tester',
         description: 'Lightweight API Testing Tool',
@@ -23,6 +21,7 @@ export default defineConfig({
         background_color: '#0f172a',
         display: 'standalone',
         start_url: '/',
+
         icons: [
           {
             src: '/apitester-icon-192.png',
